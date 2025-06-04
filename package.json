@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
+    "@types/node": "^22.15.29",
+    "cheerio": "^1.0.0",
+    "googleapis": "^105.0.0",
+    "js-base64": "^3.7.7",
+    "mailparser": "^3.7.3",
+    "typescript": "^5.8.3"
+  },
+  "name": "epic-mail",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
