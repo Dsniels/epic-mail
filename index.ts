@@ -1,17 +1,14 @@
 import { Configuration } from "./config";
 import { EmailClient } from "./EmailClient";
+import { EmailContent } from "./EmailParser";
+import dotenv from "dotenv";
 
-const main = async () => {
+(async () => {
+  dotenv.config();
   const auth = await new Configuration().getAuth();
-  const client = new EmailClient(auth,"me");
-  const labels = await client.getLabel();
-  const messages = await client.getEmails({
-    userId: "me",
-    maxResults: 1,
-    q: "from:<updates-noreply@linkedin.com>",
-  });
-  console.log(messages);
-};
-
-
-main();
+  const client = new EmailClient(auth, "me");
+  const email = await client.getEmailByQuery(process.env.query!);
+  if (!email?.content) return;
+  const pwd = EmailContent.getTemporaryPassword(email.content);
+  console.log("password: ", pwd);
+})();

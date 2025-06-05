@@ -13,7 +13,7 @@ export interface Params {
 export interface EmailOptions {
   userId: string;
   maxResults?: number;
-  q?: string;
+  query?: string;
 }
 
 export class EmailClient {
@@ -26,39 +26,52 @@ export class EmailClient {
     this.ctx = user;
   }
 
-  async getLabel() {
-    const result = await this.gmail.users.labels.list({ userId: "me" });
-    const labels = result.data.labels;
-    if (!labels || labels.length == 0) {
-      return null;
-    }
-
-    return labels;
-  }
-
   async getEmails(opts: EmailOptions) {
     const result = await this.gmail.users.messages.list({
       userId: this.ctx,
       maxResults: opts.maxResults,
-      q: opts.q,
+      q: opts.query,
     });
-    const messages = result.data.messages;
-    const parsed = messages?.map((msg) => this.getMessage(msg.id!));
-    return messages;
+    let { messages } = result.data;
+    return messages
   }
 
-  private async getMessage(messageId: string) {
+  async getEmailByQuery(query : string){
+    console.log(query)
+    const {data}= await this.gmail.users.messages.list({
+      userId: this.ctx,
+      maxResults: 1,
+      q: query,
+    });
+
+    if(!data.messages || data.messages.length <= 0 ){
+      return null
+    }
+
+    let  message  = data.messages[0];
+    const content  = await this.getMessageById(message.id!)
+    return {id:message.id, content}
+  }
+
+  async getMessageById(messageId: string) {
     const result = await this.gmail.users.messages.get({
       id: messageId,
       userId: this.ctx,
     });
 
-    console.log(result.data.payload?.parts![0].body)
-    const {body} = result.data.payload?.parts![1]!
-    console.log(body)
+    return this.parseContent(result.data.payload!);
+  }
+
+
+  async deleteMessageById(messageId:string){
+    console.log("you have to complete this")
+  }
+
+  private parseContent(content: gmail_v1.Schema$MessagePart) { 
+    const {body} = content.parts![1]!
     if (!body) return null;
     const parsed = Base64.decode(body.data!.toString()!);
-    console.log(parsed)
-    return body;
+    return parsed;
   }
+
 }
