@@ -1,7 +1,9 @@
+import { fileTypeFromBuffer } from "file-type";
 import { Configuration } from "./config";
 import { EmailClient } from "./EmailClient";
 import { EmailContent } from "./EmailParser";
 import dotenv from "dotenv";
+import { file } from "googleapis/build/src/apis/file";
 
 export class EmailService {
   private client: EmailClient;
@@ -14,8 +16,7 @@ export class EmailService {
     const email = await this.client.getEmailByQuery(process.env.query!);
     if (!email?.content || !email.id) return null;
     await this.client.deleteMessageById(email.id);
-    return EmailContent.getTemporaryPassword(email.content);
-
+    return EmailContent.getTemporaryPassword(email.content.html);
   }
 
   async waitForPasswordEmail() {
@@ -30,15 +31,18 @@ export class EmailService {
       throw new Error("No email found");
     });
   }
-
 }
 (async () => {
   dotenv.config();
   const auth = await new Configuration().getAuth();
   const client = new EmailClient(auth, "me");
   const emailService = new EmailService(client);
-  await emailService.waitForPasswordEmail();
+  const email = await client.getEmailByQuery(process.env.query_attachment!);
+  //console.log(JSON.stringify(email?.content));
+  const att = await client.getAttachemntById(
+    email?.id!,
+    email?.content?.attachmentId!,
+  );
+  const type = await fileTypeFromBuffer(att);
   const pwd = await emailService.getTemporaryPassword();
-  console.log("password: ", pwd);
 })();
-

@@ -1,9 +1,8 @@
 import { load } from "cheerio";
 
 export class EmailContent {
-  private html: string;
-  constructor(html = "") {
-    this.html = html;
+
+  constructor() {
   }
 
   static getTemporaryPassword(html: string) {

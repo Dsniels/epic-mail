@@ -3,6 +3,7 @@
     "@google-cloud/local-auth": "^2.1.0",
     "cheerio": "^1.0.0",
     "dotenv": "^16.5.0",
+    "file-type": "^21.0.0",
     "googleapis": "^105.0.0",
     "js-base64": "^3.7.7",
     "mailparser": "^3.7.3",
