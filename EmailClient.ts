@@ -5,7 +5,6 @@ import {
 } from "google-auth-library/build/src/auth/googleauth";
 import { OAuth2Client } from "google-auth-library";
 import { Base64 } from "js-base64";
-import { fileTypeFromBuffer } from "file-type";
 
 export type Content = {
   html: string;

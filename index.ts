@@ -3,7 +3,6 @@ import { Configuration } from "./config";
 import { EmailClient } from "./EmailClient";
 import { EmailContent } from "./EmailParser";
 import dotenv from "dotenv";
-import { file } from "googleapis/build/src/apis/file";
 
 export class EmailService {
   private client: EmailClient;
@@ -22,14 +21,12 @@ export class EmailService {
   async waitForPasswordEmail() {
     const start = Date.now();
     const timeout = 60000;
-    return new Promise<void>(async (resolve) => {
       while (Date.now() - start < timeout) {
         const email = await this.client.getEmailByQuery(process.env.query!);
-        if (email) return resolve();
+        if (email) return email
         await new Promise((resolve) => setTimeout(resolve, 3000));
       }
       throw new Error("No email found");
-    });
   }
 }
 (async () => {
